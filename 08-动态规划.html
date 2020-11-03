@@ -1,0 +1,82 @@
+<script>
+  // 动态规划：一个求全局最优解的问题，把它分解为多个**重复子问题**，对重复子问题求解，同时缓存那些**重复子过程**
+</script>
+<script>
+  // 实例1：青蛙跳台阶问题
+  // 有N级台阶，一只青蛙每次可以跳1级或两级，一共有多少种跳法可以跳完台阶？
+  // 1--1
+  // 2--2
+  // 3--3
+  // 4--5
+  // 5--8
+  // jump1重复计算次数过多，时间效率不高
+  function jump1(n) {
+    if (n === 1) {
+      return 1
+    }
+    if (n === 2) {
+      return 2
+    }
+    console.log('当前正在运算的n的值', n)
+    return jump1(n - 1) + jump1(n - 2)
+  }
+  // 动态规划，用空间来换时间,jump2时间效率高
+  function jump2(n) {
+    const cache = [] //缓存n对应的结果
+    function _jump2(n) {
+      if (n === 1) {
+        return 1
+      }
+      if (n === 2) {
+        return 2
+      }
+      // 看缓存中有没有记录，有的话就返回缓存中的值，避免重新计算
+      if (cache[n]) {
+        return cache[n]
+      }
+      console.log('当前正在运算的n的值', n)
+      let result = _jump2(n - 1) + _jump2(n - 2)
+      cache[n] = result //将计算过的n的值放入缓存
+      return result
+    }
+    return _jump2(n)
+  }
+</script>
+<script>
+  // 实例2：最长公共子序列问题（LCS）
+  // 有的时候，我们需要比较两个字符串的相似程度，通常就是比较两个字符串有多少相同的公共子序列
+  function LCS(str1, str2) {
+    const cache = [] //缓存 i-j:结果
+    // i:指向str1中的某个位置
+    // j:指向str2中的某个位置
+    function _LCS(i, j) {
+      if (i >= str1.length || i >= str2.length) {
+        return '' //i，j都超出了范围
+      }
+      let cacheKey = i + '-' + j //缓存的属性名字
+      if (cache[cacheKey]) {
+        return cache[cacheKey] //有缓存，就不再重新计算
+      }
+      let result //计算结果
+      if (str1[i] === str2[j]) {
+        // 匹配到，当前这个字符放入最长公共子序列
+        result = str[i] + _LCS(i + 1, j + 1)
+      } else {
+        // i不动
+        let lcs1 = _LCS(i, j + 1)
+        // j不动
+        let lcs2 = _LCS(i + 1, j)
+        result = lcs1.length > lcs2.length ? lcs1 : lcs2
+      }
+      // 缓存结果
+      cache[cacheKey] = ressult
+      return result
+    }
+    return _LCS(0, 0)
+  }
+  const result = LCS(
+    'LCS算法可以很好的计算出两篇论文的相似度',
+    '利用LCS，可以计算出搜索关键字与搜索结果的相似度'
+  )
+  console.log(result)
+</script>

@@ -1,0 +1,29 @@
+<script>
+  // 问题：假设你有一间小店，需要找给客户46分钱的硬币，你的货柜里只有面额为25分、10分、5分、1分的硬币，如何找零才能保证数额**正确**并且硬币数**最小**
+  // 贪心算法：找零问题 (局部最优解)
+  // total:找零总数
+  // denos:目前的面额
+  function exchange(total, denos) {
+    const result = [] //存放结果数组
+    while (total > 0) {
+      // 还有钱需要找，得继续找零
+      // 找出面额最大，且符合要求的
+      let max = -Infinity //定义一个无穷小的值
+      for (let i = 0; i < denos.length; i++) {
+        if (denos[i] > max && denos[i] <= total) {
+          max = denos[i] //通过循环(面额数组)和判断条件,找出小于等于总数的最大面额
+        }
+      }
+      total -= max //总数减去这个面额
+      result.push(max) //将该面额存入结果数组
+    }
+    return result
+  }
+  const res = exchange(46, [25, 10, 5, 1])
+  console.log(res)
+
+  // 注意
+  // 在有些情况下，局部最优并不能达到全局最优
+  const res1 = exchange(75, [50, 35, 35, 2, 1])
+  console.log(res1)
+</script>

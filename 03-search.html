@@ -1,0 +1,55 @@
+<script>
+  const nums = [3, 1, 4, 5, 23, 6, 3]
+
+  // 顺序查找
+  function inorderSearch(nums, target) {
+    for (let i = 0; i < nums.length; i++) {
+      if (nums[i] === target) {
+        return true //找到了，跳出循环
+      }
+    }
+    return false //没找到
+  }
+
+  // 二分查找：针对已经排好序的数组
+  function binarySearch(nums, target) {
+    let minIndex = 0,
+      maxIndex = nums.length - 1
+    while (minIndex <= maxIndex) {
+      let mid = Math.floor((minIndex + maxIndex) / 2) //向下取整
+
+      if (nums[mid] === target) {
+        return true
+      } else if (nums[mid] > target) {
+        maxIndex = mid - 1
+      } else {
+        minIndex = mid + 1
+      }
+    }
+    return false
+  }
+
+  // 插值查找：针对排序好的数组，且步长差不多
+  function insertSearch(nums, target) {
+    let minIndex = 0,
+      maxIndex = nums.length - 1
+    while (minIndex <= maxIndex) {
+      let mid = Math.floor(
+        ((target - nums[minIndex]) / (nums[maxIndex] - nums[minIndex])) *
+          (maxIndex - minIndex) +
+          minIndex
+      ) //向下取整
+      if (mid < minIndex || mid > maxIndex) {
+        return false
+      }
+      if (nums[mid] === target) {
+        return true
+      } else if (nums[mid] > target) {
+        maxIndex = mid - 1
+      } else {
+        minIndex = mid + 1
+      }
+    }
+    return false
+  }
+</script>

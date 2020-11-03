@@ -1,0 +1,166 @@
+<script>
+  // 创建一个无序图
+  function Node(value) {
+    this.value = value //节点的值
+    this.neighbors = [] //邻居(相连节点)
+  }
+  const a = new Node('a')
+  const b = new Node('b')
+  const c = new Node('c')
+  const d = new Node('d')
+  const e = new Node('e')
+  const f = new Node('f')
+  a.neighbors = [b, c]
+  b.neighbors = [a, c, d]
+  c.neighbors = [a, b, e]
+  d.neighbors = [b, f]
+  e.neighbors = [c, f]
+  f.neighbors = [d, e]
+</script>
+<script>
+  // 深度优先搜索 一个一个找
+  function deepSearch(node, target) {
+    const found = [] //已经找过的节点
+    function _deepSearch(node) {
+      if (found.includes(node)) {
+        return false //已经被找过了
+      }
+      console.log(node.value) //打印搜索的路径
+      if (node.value === target) {
+        return true //找到了
+      }
+      // 没有找到
+      found.push(node) //这个节点不是，放进找过的数组中
+      for (let i = 0; i < node.neighbors.length; i++) {
+        let nextNode = node.neighbors[i]
+        if (_deepSearch(nextNode)) {
+          return true // 在邻居找到了
+        }
+      }
+      return false //所有的邻居都不是要找的
+    }
+    return _deepSearch(node)
+  }
+
+  // 广度优先搜索 按层找
+  function breadthSearch(node, target) {
+    const found = [] //已经找过的
+    // 必须保证nodes参数中的节点都是没有找过的
+    function _breadthSearch(nodes) {
+      if (nodes.length === 0) {
+        return false //这一层已经没有任何节点了
+      }
+
+      let next = [] //存放下一层的节点
+      for (let i = 0; i < nodes.length; i++) {
+        let curNode = nodes[i]
+        console.log(curNode.value) //打印搜索的路径
+        if (curNode.value === target) {
+          return true //找到了
+        }
+        // 没有找到,将该节点加入到已找节点数组中
+        found.push(curNode)
+        // 将该节点的邻居节点加入到下一层节点数组中
+        for (let j = 0; j < curNode.neighbors.length; j++) {
+          if (!next.includes(curNode.neighbors[j])) {
+            //保证下一层节点数组不重复
+            next.push(curNode.neighbors[j])
+          }
+        }
+      }
+
+      // 这一层已经看完了，found已经更新
+      // 此时来去掉next中已经找过的节点
+      next = next.filter((item) => !found.includes(item))
+
+      return _breadthSearch(next) //递归调用
+    }
+    return _breadthSearch([node])
+  }
+</script>
+<script>
+  // 最小生成树
+
+  //节点的数组
+  const nodes = [
+    new Node('a'),
+    new Node('b'),
+    new Node('c'),
+    new Node('d'),
+    new Node('e'),
+  ]
+  // 各节点之间的距离
+  const sides = [
+    [0, 8, 3, Infinity, 4],
+    [8, 0, 4, 10, Infinity],
+    [3, 4, 0, 3, Infinity],
+    [Infinity, 10, 3, 0, 6],
+    [4, Infinity, Infinity, 6, 0],
+  ]
+
+  // Prim算法，找最小生成树 将村庄形成部落
+  function Prim(nodes, sides) {
+    // 节点数小于等于1，构不成树
+    if (nodes.length <= 1) {
+      return
+    }
+    let hord = [nodes[0]] // 初始只有一个村庄
+    while (hord.length < nodes.length) {
+      // 说明还有村庄没有加入到部落中
+      // 继续向部落中添加村庄
+      connectToHord()
+    }
+    console.log(hord)
+
+    // 从非部落节点中,找到一个最短距离的节点，连接到部落
+    function connectToHord() {
+      let result = {
+        from: null,
+        to: null,
+        dis: Infinity,
+      }
+      for (let i = 0; i < nodes.length; i++) {
+        let node = nodes[i]
+        // 如果发现节点不在部落中
+        if (!hord.includes(node)) {
+          let info = getMinDistance(node) // 查看这个节点到部落的情况
+          if (info.dis < result.dis) {
+            result = info //发现有更短的节点
+          }
+        }
+      }
+      // result一定是最优的,将村庄连接到部落上
+      result.from.neighbors.push(result.to) //将部落节点加入到村庄节点的neighbors中
+      result.to.neighbors.push(result.from) //将村庄节点加入到部落节点的neighbors中
+      // 加入到部落中
+      hord.push(result.from)
+    }
+    // 得到node到部落最小的距离，以及连接到部落的哪个点
+    function getMinDistance(node) {
+      let result = {
+        from: node, //村庄自己
+        to: null, //部落中某村庄的节点
+        dis: Infinity,
+      }
+      for (let i = 0; i < hord.length; i++) {
+        let dis = getDistance(node, hord[i])
+        if (dis < result.dis) {
+          // 有更小的距离
+          result.to = hord[i]
+          result.dis = dis
+        }
+      }
+      return result
+    }
+    // 得到两个节点之间的距离
+    function getDistance(node1, node2) {
+      if (node1 === node2) {
+        throw new Error('不能得到自己与自己之间的距离')
+      }
+      let row = nodes.indexOf(node1) //行
+      let col = nodes.indexOf(node2) //列
+      return sides[row][col]
+    }
+  }
+  Prim(nodes, sides)
+</script>

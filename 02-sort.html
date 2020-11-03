@@ -1,0 +1,83 @@
+<script>
+  const nums = [3, 6, 7, 2, 4, 1]
+
+  // ES5,交换数组两个下标的值，很多排序算法都要用
+  function swap(nums, i, j) {
+    let temp = nums[i]
+    nums[i] = nums[j]
+    nums[j] = temp
+  }
+
+  // ES6，使用变量交换
+  // ;[x, y] = [y, x]
+
+  // 选择排序：遍历数组找最小值，往前放，遍历一次放一次
+  function selectionSort(nums) {
+    let len = nums.length
+    for (let i = 0; i < len - 1; i++) {
+      //0-nums.length-2
+      let min = nums[i]
+      for (let j = i + 1; j < len; j++) {
+        // i+1-nums.length-1
+        if (nums[j] < min) {
+          // 遍历时，遇到比min还小的值，就把值交换，保证min的值最小
+          ;[nums[j], min] = [min, nums[j]]
+        }
+      }
+      nums[i] = min //遍历完成，min拿到最小值，放到前面
+    }
+    return nums
+  }
+
+  // 冒牌排序
+  function bubbleSort(nums) {
+    let len = nums.length - 1
+    for (let i = 0; i < len; i++) {
+      for (let j = 0; j < len - i; j++) {
+        if (nums[j] > nums[j + 1]) {
+          //只要前面的值大于后面的值就交换位置
+          ;[nums[j], nums[j + 1]] = [nums[j + 1], nums[j]]
+        }
+      }
+    }
+    return nums
+  }
+
+  // 快速排序
+  function quickSort(nums) {
+    // 辅助函数--在指定的下标范围内，（以一个数为基准，小的靠左，大的靠右）
+    function _quickSort(start, end) {
+      if (start >= end || start < 0 || end > nums.length - 1) {
+        return //下标出现异常
+      }
+      let low = start, //低位游标
+        high = end, //高位游标
+        key = nums[end] //基准值
+      while (low < high) {
+        // 低位向高位移动
+        while (low < high && nums[low] <= key) {
+          //从低往高走，值nums[low]是否比基准值key小
+          low++
+        }
+        // nums[low]值大于基准值key，将nums[low]放到key的右边
+        nums[high] = nums[low]
+        // 高位向低位移动
+        while (low < high && nums[high] >= key) {
+          //从高往底走，值nums[high]是否比基准值key大
+          high--
+        }
+        // nums[high]值小于基准值key，将nums[high]放到key的左边
+        nums[low] = nums[high]
+      }
+      // 高位低位重叠
+      nums[low] = key
+      // 对左边的范围再来一次
+      _quickSort(start, low - 1)
+      // 对右边的范围再来一次
+      _quickSort(low + 1, end)
+    }
+    _quickSort(0, nums.length - 1)
+
+    return nums
+  }
+</script>

@@ -1,0 +1,109 @@
+<!-- 创建一个链表 -->
+<script>
+  function Node(value) {
+    this.value = value //节点的值
+    this.next = null //下一个节点
+  }
+  // 创建一些节点
+  const a = new Node('a')
+  const b = new Node('b')
+  const c = new Node('c')
+  const d = new Node('d')
+  // 节点指向
+  a.next = b
+  b.next = c
+  c.next = d
+</script>
+
+<!-- 关于链表的一些算法 -->
+<script>
+  // 1.打印整个链表
+  function print(node) {
+    if (!node) {
+      return //没有节点了
+    }
+    console.log(node.value) //打印自己
+    print(node.next) //打印下一个
+  }
+
+  // 2.获取链表的长度
+  function getLength(node) {
+    if (!node) {
+      return 0 //没有节点了
+    }
+    return 1 + getLength(node.next)
+  }
+
+  // 3.通过下标获取链表中的某个数据
+  function getValue(node, index) {
+    // 辅助函数--根据当前的节点和当前下标，得到对应的值
+    function _getValue(curNode, curIndex) {
+      if (!curNode) {
+        return null //当前节点不存在，没有找到
+      } else if (curIndex !== index) {
+        return _getValue(curNode.next, curIndex + 1) //下标不匹配，还没有找到
+      } else {
+        return curNode.value //下标相等，找到了
+      }
+    }
+    return _getValue(node, 0)
+  }
+
+  // 4.通过下标设置链表中的某个数据
+  function setValue(node, index, value) {
+    // 辅助函数--设置当前的值
+    function _setValue(curNode, curIndex) {
+      if (!curNode) {
+        return //节点已经没了，没有找到
+      } else if (curIndex === index) {
+        curNode.value = value //下标相等，匹配成功
+      } else {
+        _setValue(curNode.next, curIndex + 1) //下标不相等，继续匹配
+      }
+    }
+    _setValue(node, 0)
+  }
+
+  // 5.在链表末尾加入一个新节点
+  function add(node, newValue) {
+    if (node.next) {
+      add(node.next, newValue) //节点存在，就继续往后找
+    }
+    const newNode = new Node(newValue) //创建一个新节点，节点newNode.value=newValue
+    node.next = newNode //原链表末尾节点的next指向新节点newNode
+  }
+
+  // 6.在链表某一节点之后加入一个新节点
+  function insert(node, insertValue, newValue) {
+    if (node.value === insertValue) {
+      // 当前节点的值等于指定的节点的值，表示在此节点后面插入新节点
+      const newNode = new Node(newValue)
+      newNode.next = node.next //将新节点的next指向后一个节点
+      node.next = newNode //将当前节点的next指向新节点
+    } else if (!node.next) {
+      // 没有匹配到指定的节点，且已经到达末尾
+      const newNode = new Node(newValue)
+      node.next = newNode
+    } else {
+      // 没有匹配到当前节点，继续匹配下一个
+      insert(node.next, insertValue, newValue)
+    }
+  }
+
+  // 7.删除指定值的节点，不考虑链表中有重复的值,匹配一次即可，返回删除之后的链表的首节点
+  function remove(node, value) {
+    if (!node) {
+      // 节点都没有
+      return null
+    }
+    // 有节点
+    if (node.value === value) {
+      // 匹配到了，这个节点需要被删除
+      return node.next
+    } else {
+      // 这个节点不需要删除
+      node.next = remove(node.next, value)
+      return node
+    }
+  }
+</script>

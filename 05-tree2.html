@@ -1,0 +1,151 @@
+<script>
+  // 创建一颗二叉树
+  function Node(value) {
+    this.value = value //节点的值
+    this.left = null //左孩子
+    this.right = null //右孩子
+  }
+  const a = new Node('A')
+  const b = new Node('B')
+  const c = new Node('C')
+  const d = new Node('D')
+  const e = new Node('E')
+  const f = new Node('F')
+  const g = new Node('G')
+
+  a.left = b
+  a.right = c
+  b.left = d
+  b.right = e
+  c.left = f
+  d.left = g
+</script>
+<script>
+  // 1.前序遍历 先自己，再左孩子，后右孩子
+  function DLR(node) {
+    if (!node) {
+      return //没有节点
+    }
+    console.log(node.value) //先自己
+    DLR(node.left) //左孩子
+    DLR(node.right) //右孩子
+  }
+
+  // 2.中序遍历 先左孩子 再自己 后右孩子
+  function LDR(node) {
+    if (!node) {
+      return
+    }
+    LDR(node.left)
+    console.log(node.value)
+    LDR(node.right)
+  }
+
+  // 3.后序遍历 先左孩子 再右孩子 后自己
+  function LRD(node) {
+    if (!node) {
+      return
+    }
+    LRD(node.left)
+    LRD(node.right)
+    console.log(node.value)
+  }
+
+  // 4.根据前序和中序遍历结果，得到一颗二叉树
+  function getTree(dlr, ldr) {
+    if (dlr.length === 0 && ldr.length === 0) {
+      // 没有前序和中序，没有节点
+      return null
+    }
+    let rootValue = dlr[0] //前序遍历的第一个值为根结点的value值
+    let root = new Node(rootValue) //创建根节点
+    let rootIndex = ldr.indexOf(rootValue) //根节点在中序遍历中的位置
+
+    let leftLDR = ldr.substring(0, rootIndex) //左边的中序遍历
+    let leftDLR = dlr.substr(1, leftLDR.length) //左边的前序遍历
+
+    let rightLDR = ldr.substr(rootIndex + 1) //右边的中序遍历
+    let rightDLR = dlr.substr(leftDLR.length + 1) //右边的先序遍历
+
+    root.left = getTree(leftDLR, leftLDR)
+    root.right = getTree(rightDLR, rightLDR)
+
+    return root
+  }
+
+  // 5.计算树的深度
+  function getDeep(node) {
+    if (!node) {
+      return 0
+    }
+    return 1 + Math.max(getDeep(node.left), getDeep(node.right))
+  }
+
+  // 6.深度优先搜索 (前序遍历)
+  function deepSearch(node, target) {
+    if (!node) {
+      return false //没有找到
+    }
+    console.log(node.value)
+    if (node.value === target) {
+      return true //找到了
+    }
+    return deepSearch(node.left, target) || deepSearch(node.right, target)
+  }
+
+  // 7.广度优先搜索(按层搜索)
+  function breadthSearch(node, target) {
+    // 辅助函数 nodes为数组
+    function _breadthSearch(nodes) {
+      if (nodes.length === 0) {
+        return false //数组为空，没有找到
+      }
+      const nextLayer = [] //存放下一层的节点
+      for (let i = 0; i < nodes.length; i++) {
+        console.log(nodes[i].value)
+
+        if (nodes[i].value === target) {
+          return true //找到了
+        }
+        if (nodes[i].left) {
+          nextLayer.push(nodes[i].left) //如果节点的左孩子有值，就存入下一层数组
+        }
+        if (nodes[i].right) {
+          nextLayer.push(nodes[i].right) //如果节点的右孩子有值，就存入下一层数组
+        }
+      }
+      return _breadthSearch(nextLayer) //一层一层找
+    }
+    return _breadthSearch([node]) //将node转换为数组形式
+  }
+
+  // 8.对比两颗树的差异，返回差异结果(数组)
+  function diff(node1, node2) {
+    let result = []
+    if (!node1 && !node2) {
+      return result //两个节点都没有值，不可能有差异
+    }
+    if (!node1 && node2) {
+      result.push({ type: '新增', from: null, to: node2 })
+      return result //这种情况就不需要往后比较了
+    }
+    if (node1 && !node2) {
+      result.push({ type: '删除', from: node1, to: null })
+      return result //这种情况就不需要往后比较了
+    }
+    if (node1 && node2) {
+      result.push({ type: '修改', from: node1, to: node2 })
+      // 继续往后比较
+    }
+
+    let leftDiff = diff(node1.left, node2.left) //左树的差异
+    let rightDiff = diff(node1.right, node2.right) //右树的差异
+    result = [...leftDiff, ...rightDiff] //将差异存进结果数组
+
+    return result
+  }
+  const node1 = getTree('ABDGECF', 'GDBEAFC')
+  const node2 = getTree('AKDECFT', 'DKEAFCT')
+  const result = diff(node1, node2)
+  console.log(result)
+</script>

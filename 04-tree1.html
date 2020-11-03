@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <img src="./树.png" alt="" />
+    <script>
+      // 创建一颗树
+      function Node(value) {
+        this.value = value //节点中的数据
+        this.children = [] //指向其他节点的数组（孩子节点）
+      }
+      const a = new Node('A')
+      const b = new Node('B')
+      const c = new Node('C')
+      const d = new Node('D')
+      const e = new Node('E')
+      const f = new Node('F')
+
+      a.children.push(b, c)
+      b.children.push(d, e, f)
+    </script>
+  </body>
+</html>
